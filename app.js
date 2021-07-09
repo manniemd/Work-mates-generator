@@ -64,3 +64,31 @@ function promptUser() {
         }
     ]);
 }
+async function init() {
+    try {
+        const answer = await promptUser();
+        if (answer.role === "Manager") {
+            managers.push(new Manager(answer.name, answer.id, answer.email, answer.officeNumber));
+            ismanagerPicked = true;
+        }
+        else if (answer.role === "Engineer") {
+            engineers.push(new Engineer(answer.name, answer.id, answer.email, answer.github));
+        }
+        else {
+            interns.push(new Intern(answer.name, answer.id, answer.email, answer.school));
+        }
+        if (answer.continue) {
+            init();
+        }
+        else {
+            console.log("Your Work-Mates has been created.");
+            const htmlFile = render([...managers, ...engineers, ...interns]);
+
+            await writetoFile("./output/index.html", htmlFile);
+        }
+    }
+    catch (err) {
+        console.log(err)
+    }
+}
+init();
